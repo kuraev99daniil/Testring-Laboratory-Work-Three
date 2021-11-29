@@ -7,7 +7,9 @@ namespace Laboratory_Work_Three
 {
     public class Versioning
     {
-		private List<string> versionParts;
+		private readonly string preRelease;
+
+		private readonly List<int> mainVersionParts;
 
 		public Versioning(string version)
 		{
@@ -16,21 +18,22 @@ namespace Laboratory_Work_Three
 				throw new ArgumentException("Значение не корректно!");
 			}
 
-			versionParts = new List<string>();
+			mainVersionParts = new List<int>();
 
 			var splitPreRelease = version.Split("-");
 
-			versionParts = splitPreRelease[0]
+			mainVersionParts = splitPreRelease[0]
 				.Split('.')
-				.ToList();
+				.ToList()
+				.ConvertAll(value => int.Parse(value));
 
 			if (splitPreRelease.Length > 1)
 			{
-				versionParts.Add(splitPreRelease[1]);
+				preRelease = splitPreRelease[1];
 			}
 			else
 			{
-				versionParts.Add(null);
+				preRelease = null;
 			}
 		}
 
@@ -50,13 +53,13 @@ namespace Laboratory_Work_Three
 
 		private static bool IsMore(Versioning v1, Versioning v2)
 		{
-			var versionParts1 = v1.versionParts;
-			var versionParts2 = v2.versionParts;
+			var versionParts1 = v1.mainVersionParts;
+			var versionParts2 = v2.mainVersionParts;
 
 			for (int i = 0; i < 3; i++)
 			{
-				var version1 = int.Parse(versionParts1[i]);
-				var version2 = int.Parse(versionParts2[i]);
+				var version1 = versionParts1[i];
+				var version2 = versionParts2[i];
 
 				if (version1 > version2) return true;
 
@@ -65,7 +68,7 @@ namespace Laboratory_Work_Three
 				return false;
 			}
 
-			return ComparePreRelease(versionParts1[3], versionParts2[3]) > 0;
+			return ComparePreRelease(v1.preRelease, v2.preRelease) > 0;
 		}
 
 		private static int ComparePreRelease(string preRelease1, string preRelease2)
@@ -84,41 +87,11 @@ namespace Laboratory_Work_Three
 
 			for (int i = 0; i < splitPreRelease1.Length; i++)
 			{
-				var splitPreReleaseChar1 = splitPreRelease1[i].ToCharArray();
-				var splitPreReleaseChar2 = splitPreRelease2[i].ToCharArray();
+				var compareResult = string.Compare(splitPreRelease1[i], splitPreRelease2[i]);
 
-				if (splitPreReleaseChar1.Length > splitPreReleaseChar2.Length) return 1;
-				if (splitPreReleaseChar1.Length < splitPreReleaseChar2.Length) return -1;
+				if (compareResult == 0) continue;
 
-				for (int j = 0; j < splitPreReleaseChar1.Length; j++)
-				{
-					var isDigitChar1 = char.IsDigit(splitPreReleaseChar1[j]);
-					var isDigitChar2 = char.IsDigit(splitPreReleaseChar2[j]);
-
-					if (!isDigitChar1 && isDigitChar2)
-					{
-						return 1;
-					}
-
-					if (isDigitChar1 && !isDigitChar2)
-					{
-						return -1;
-					}
-
-					if (isDigitChar1 && isDigitChar2)
-					{
-						var digit1 = int.Parse(splitPreReleaseChar1[j].ToString());
-						var digit2 = int.Parse(splitPreReleaseChar2[j].ToString());
-
-						return digit1 > digit2 ? 1 : -1;
-					}
-
-					if (!isDigitChar1 && !isDigitChar2)
-					{
-						if (splitPreReleaseChar1[j] > splitPreReleaseChar2[j]) return 1;
-						if (splitPreReleaseChar1[j] < splitPreReleaseChar2[j]) return -1;
-					}
-				}
+				return compareResult;
 			}
 
 			return 0;
@@ -136,13 +109,13 @@ namespace Laboratory_Work_Three
 
 		private static bool IsMoreOrEqual(Versioning v1, Versioning v2)
 		{
-			var versionParts1 = v1.versionParts;
-			var versionParts2 = v2.versionParts;
+			var versionParts1 = v1.mainVersionParts;
+			var versionParts2 = v2.mainVersionParts;
 
 			for (int i = 0; i < 3; i++)
 			{
-				var version1 = int.Parse(versionParts1[i]);
-				var version2 = int.Parse(versionParts2[i]);
+				var version1 = versionParts1[i];
+				var version2 = versionParts2[i];
 
 				if (version1 > version2) return true;
 
@@ -151,18 +124,18 @@ namespace Laboratory_Work_Three
 				return false;
 			}
 
-			return ComparePreRelease(versionParts1[3], versionParts2[3]) >= 0;
+			return ComparePreRelease(v1.preRelease, v2.preRelease) >= 0;
 		}
 
 		private static bool IsLessOrEqual(Versioning v1, Versioning v2)
 		{
-			var versionParts1 = v1.versionParts;
-			var versionParts2 = v2.versionParts;
+			var versionParts1 = v1.mainVersionParts;
+			var versionParts2 = v2.mainVersionParts;
 
 			for (int i = 0; i < 3; i++)
 			{
-				var version1 = int.Parse(versionParts1[i]);
-				var version2 = int.Parse(versionParts2[i]);
+				var version1 = versionParts1[i];
+				var version2 = versionParts2[i];
 
 				if (version1 < version2) return true;
 
@@ -171,7 +144,7 @@ namespace Laboratory_Work_Three
 				return false;
 			}
 
-			return ComparePreRelease(versionParts1[3], versionParts2[3]) <= 0;
+			return ComparePreRelease(v1.preRelease, v2.preRelease) <= 0;
 		}
 
 		public static bool operator ==(Versioning version1, Versioning version2)
@@ -191,12 +164,12 @@ namespace Laboratory_Work_Three
 
 		public override string ToString()
 		{
-			if (versionParts[3] != null)
+			if (preRelease != null)
 			{
-				return $"{versionParts[0]}.{versionParts[1]}.{versionParts[2]}-{versionParts[3]}";
+				return $"{mainVersionParts[0]}.{mainVersionParts[1]}.{mainVersionParts[2]}-{preRelease}";
 			}
 
-			return $"{versionParts[0]}.{versionParts[1]}.{versionParts[2]}";
+			return $"{mainVersionParts[0]}.{mainVersionParts[1]}.{mainVersionParts[2]}";
 		}
 	}
 }
