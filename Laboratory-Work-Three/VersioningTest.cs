@@ -70,7 +70,7 @@ namespace Laboratory_Work_Three
 
 			Assert.IsFalse(new Versioning("5.8.1-alpha") <= new Versioning("4.8.7-alpha"));
 			Assert.IsFalse(new Versioning("4.1.7-alpha.5") <= new Versioning("4.1.7-alpha.1"));
-			Assert.IsFalse(new Versioning("50.80.1") <= new Versioning("50.80.1-alpha")); // here
+			Assert.IsFalse(new Versioning("50.80.1") <= new Versioning("50.80.1-alpha"));
 		}
 
 		[Test]
