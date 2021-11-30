@@ -53,13 +53,10 @@ namespace Laboratory_Work_Three
 
 		private static bool IsMore(Versioning v1, Versioning v2)
 		{
-			var versionParts1 = v1.mainVersionParts;
-			var versionParts2 = v2.mainVersionParts;
-
 			for (int i = 0; i < 3; i++)
 			{
-				var version1 = versionParts1[i];
-				var version2 = versionParts2[i];
+				var version1 = v1.mainVersionParts[i];
+				var version2 = v2.mainVersionParts[i];
 
 				if (version1 > version2) return true;
 
@@ -109,13 +106,10 @@ namespace Laboratory_Work_Three
 
 		private static bool IsMoreOrEqual(Versioning v1, Versioning v2)
 		{
-			var versionParts1 = v1.mainVersionParts;
-			var versionParts2 = v2.mainVersionParts;
-
 			for (int i = 0; i < 3; i++)
 			{
-				var version1 = versionParts1[i];
-				var version2 = versionParts2[i];
+				var version1 = v1.mainVersionParts[i];
+				var version2 = v2.mainVersionParts[i];
 
 				if (version1 > version2) return true;
 
@@ -129,13 +123,10 @@ namespace Laboratory_Work_Three
 
 		private static bool IsLessOrEqual(Versioning v1, Versioning v2)
 		{
-			var versionParts1 = v1.mainVersionParts;
-			var versionParts2 = v2.mainVersionParts;
-
 			for (int i = 0; i < 3; i++)
 			{
-				var version1 = versionParts1[i];
-				var version2 = versionParts2[i];
+				var version1 = v1.mainVersionParts[i];
+				var version2 = v2.mainVersionParts[i];
 
 				if (version1 < version2) return true;
 
