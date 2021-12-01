@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Laboratory_Work_Three
 {
-    public class Versioning
+    public class Versioning : IComparable<Versioning>
     {
 		private readonly string preRelease;
 
@@ -37,6 +37,23 @@ namespace Laboratory_Work_Three
 			}
 		}
 
+		public int CompareTo(Versioning otherVersion)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				var currentVersion = mainVersionParts[i];
+				var version2 = otherVersion.mainVersionParts[i];
+
+				if (currentVersion > version2) return 1;
+
+				if (currentVersion == version2) continue;
+
+				return -1;
+			}
+
+			return 0;
+		}
+
 		public static bool operator > (Versioning version1, Versioning version2)
 		{
 			return IsMore(version1, version2);
@@ -53,19 +70,25 @@ namespace Laboratory_Work_Three
 
 		private static bool IsMore(Versioning v1, Versioning v2)
 		{
-			for (int i = 0; i < 3; i++)
-			{
-				var version1 = v1.mainVersionParts[i];
-				var version2 = v2.mainVersionParts[i];
-
-				if (version1 > version2) return true;
-
-				if (version1 == version2) continue;
-
-				return false;
+			switch (v1.CompareTo(v2))
+            {
+				case -1:
+					{
+						return false;
+					}
+				case 0:
+					{
+						return ComparePreRelease(v1.preRelease, v2.preRelease) > 0;
+					}
+				case 1:
+                    {
+						return true;
+                    }
+				default:
+                    {
+						throw new Exception("Неверная работа Comparator");
+                    }
 			}
-
-			return ComparePreRelease(v1.preRelease, v2.preRelease) > 0;
 		}
 
 		private static int ComparePreRelease(string preRelease1, string preRelease2)
@@ -106,36 +129,40 @@ namespace Laboratory_Work_Three
 
 		private static bool IsMoreOrEqual(Versioning v1, Versioning v2)
 		{
-			for (int i = 0; i < 3; i++)
+			switch (v1.CompareTo(v2))
 			{
-				var version1 = v1.mainVersionParts[i];
-				var version2 = v2.mainVersionParts[i];
-
-				if (version1 > version2) return true;
-
-				if (version1 == version2) continue;
-
-				return false;
+				case -1:
+					{
+						return false;
+					}
+				case >= 0:
+					{
+						return ComparePreRelease(v1.preRelease, v2.preRelease) >= 0;
+					}
+				default:
+					{
+						throw new Exception("Неверная работа Comparator");
+					}
 			}
-
-			return ComparePreRelease(v1.preRelease, v2.preRelease) >= 0;
 		}
 
 		private static bool IsLessOrEqual(Versioning v1, Versioning v2)
 		{
-			for (int i = 0; i < 3; i++)
+			switch (v1.CompareTo(v2))
 			{
-				var version1 = v1.mainVersionParts[i];
-				var version2 = v2.mainVersionParts[i];
-
-				if (version1 < version2) return true;
-
-				if (version1 == version2) continue;
-
-				return false;
+				case 1:
+					{
+						return false;
+					}
+				case <= 0:
+					{
+						return ComparePreRelease(v1.preRelease, v2.preRelease) <= 0;
+					}
+				default:
+					{
+						throw new Exception("Неверная работа Comparator");
+					}
 			}
-
-			return ComparePreRelease(v1.preRelease, v2.preRelease) <= 0;
 		}
 
 		public static bool operator ==(Versioning version1, Versioning version2)
@@ -162,5 +189,5 @@ namespace Laboratory_Work_Three
 
 			return $"{mainVersionParts[0]}.{mainVersionParts[1]}.{mainVersionParts[2]}";
 		}
-	}
+    }
 }
